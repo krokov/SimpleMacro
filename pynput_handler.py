@@ -8,8 +8,7 @@ class PynputHandler:
         self.hotkeys = {}
         self.paused = False
         
-        # New attributes for the recording delay
-        self.recording_delay = 0.1  # Default delay of 100ms
+        self.recording_delay = 0.1
         self.recording_start_time = 0
 
         self.mouse_listener = mouse.Listener(
@@ -28,10 +27,9 @@ class PynputHandler:
         try:
             self.recording_delay = float(delay)
         except (ValueError, TypeError):
-            self.recording_delay = 0.1 # Fallback to default if value is invalid
+            self.recording_delay = 0.1 
 
     def _add_event(self, event_type, *args):
-        # Only add the event if recording is active AND the delay period has passed.
         if self.is_recording and time.time() > self.recording_start_time:
             event = {'time': time.time(), 'type': event_type, 'data': args}
             self.recorded_events.append(event)
@@ -50,7 +48,6 @@ class PynputHandler:
         self._add_event('mouse_click', x, y, str(button), pressed)
 
     def on_move(self, x, y):
-        # Check the time here as well to avoid spamming move events during the delay
         if self.is_recording and time.time() > self.recording_start_time and self.recorded_events:
             last_event = self.recorded_events[-1]
             if last_event['type'] == 'mouse_move':
@@ -95,7 +92,6 @@ class PynputHandler:
     def start_recording(self):
         self.recorded_events = []
         self.is_recording = True
-        # Set the time when recording is allowed to actually start
         self.recording_start_time = time.time() + self.recording_delay
 
     def stop_recording(self):
